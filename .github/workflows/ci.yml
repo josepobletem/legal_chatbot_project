@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Lint code
+        run: |
+          pip install pylint
+          pylint app tests
+
+      - name: Run unit tests
+        run: |
+          pytest
+
+      - name: Validate presence of critical files
+        run: |
+          test -f Dockerfile
+          test -f .cloudbuild.yaml
+          test -f terraform/main.tf
+          test -f terraform/variables.tf
+          test -f terraform/outputs.tf
+        shell: bash
+
+

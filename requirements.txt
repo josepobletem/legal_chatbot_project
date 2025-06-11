@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+openai
+psycopg2-binary
+loguru
+prometheus_client
+python-dotenv
+pytest
