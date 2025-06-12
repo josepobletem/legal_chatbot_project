@@ -6,7 +6,9 @@ y consulta a OpenAI para generar respuestas precisas.
 """
 
 import os
+
 import openai
+
 from app.prompt_templates import prompt_laboral_chile
 from app.retriever import retrieve_context
 

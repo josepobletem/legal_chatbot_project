@@ -1,4 +1,9 @@
+"""
+Tests para verificar la generación del índice FAISS en el módulo embedder.
+"""
+
 import os
+
 from app import embedder
 
 DOCS_DIR: str = "app/docs"
@@ -12,22 +17,19 @@ def init_test_docs() -> None:
     Esta función crea el directorio `app/docs/` si no existe
     y luego genera un archivo `ejemplo_despido.txt` con contenido
     legal simulado para pruebas de embeddings.
-
-    Returns
-    -------
-    None
     """
     os.makedirs(DOCS_DIR, exist_ok=True)
 
     if not os.path.exists(DOC_FILE):
         with open(DOC_FILE, "w", encoding="utf-8") as f:
-            f.write(
+            contenido = (
                 "Artículo 161 del Código del Trabajo chileno establece que el empleador "
                 "puede poner término al contrato de trabajo por necesidades de la empresa, "
-                "tales como bajas en productividad, cambios en el mercado o innovación tecnológica.\n\n"
-                "El trabajador tiene derecho a una indemnización equivalente a 30 días por cada año "
+                "tales como bajas en productividad, cambios en el mercado o innovación tecnológica."
+                "El trabajador tiene derecho a una indemnización equivalente a 30 días por cada año"
                 "de servicio con un máximo de 330 días, salvo pacto diferente."
             )
+            f.write(contenido)
 
 
 def test_build_faiss_index() -> None:
@@ -36,10 +38,6 @@ def test_build_faiss_index() -> None:
 
     Llama a `embedder.build_faiss_index()` después de preparar un documento
     simulado. Verifica que se generen los archivos `index.faiss` y `docs.pkl`.
-
-    Returns
-    -------
-    None
     """
     init_test_docs()
     embedder.build_faiss_index()

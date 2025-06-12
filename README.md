@@ -58,12 +58,12 @@ La plataforma permite a los usuarios interactuar mediante lenguaje natural, reci
 | `retriever.py`           | Recupera contexto legal relevante para cada pregunta.                       |
 | `embedder.py`            | Indexa documentos legales y construye FAISS (o Chroma) para RAG.            |
 | `auth.py`                | Verifica tokens en headers para proteger endpoints.                         |
-| `db.py`                  | Guarda las preguntas/respuestas con timestamp. 
+| `db.py`                  | Guarda las preguntas/respuestas con timestamp.
 
 
 ## 🧠 Ejemplo de flujo RAG
 
-1. El usuario envía:  
+1. El usuario envía:
    `"¿Qué derechos tengo si me despiden por necesidades de la empresa?"`
 
 2. El sistema busca contexto legal relevante (ej: Art. 161 del Código del Trabajo).
@@ -102,7 +102,7 @@ make install
 docker-compose up --build
 ```
 
-Accede a la API en: [http://localhost:8000/docs](http://localhost:8000/docs)  
+Accede a la API en: [http://localhost:8000/docs](http://localhost:8000/docs)
 Prometheus en: [http://localhost:9090](http://localhost:9090)
 
 ---
@@ -239,4 +239,4 @@ docker push <ecr_repo_url>:latest
 
 ## 🧠 Créditos
 
-Este proyecto está desarrollado por y para profesionales del derecho y tecnología, con foco en acceso justo a la información legal automatizada.
+Este proyecto está desarrollado por José Poblete M. y Chatgpt 4o, para profesionales del derecho y tecnología, con foco en acceso justo a la información legal automatizada.

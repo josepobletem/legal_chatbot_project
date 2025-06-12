@@ -1,32 +1,18 @@
-import sys, os
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+"""
+Tests para la función generate_response en openai_client.py.
+Simula la llamada al modelo OpenAI usando monkeypatch.
+"""
 
 from app.openai_client import generate_response
+from tests.utils.mock_openai import MockClient
 
 
 def test_generate_response_format(monkeypatch):
-    # Simula el contenido que retornaría OpenAI
-    class MockMessage:
-        content = "Respuesta simulada"
-
-    class MockChoice:
-        message = MockMessage()
-
-    class MockCompletions:
-        @staticmethod
-        def create(*args, **kwargs):
-            return type("MockResponse", (), {"choices": [MockChoice()]})()
-
-    class MockChat:
-        completions = MockCompletions()
-
-    class MockClient:
-        chat = MockChat()
-
-    monkeypatch.setattr(
-        "app.openai_client.openai.OpenAI", lambda api_key=None: MockClient()
-    )
+    """
+    Verifica que generate_response devuelva una string esperada
+    al simular la respuesta del cliente OpenAI con monkeypatch.
+    """
+    monkeypatch.setattr("app.openai_client.openai.OpenAI", lambda api_key=None: MockClient())
 
     response = generate_response("¿Cuál es la ley laboral actual?")
     assert isinstance(response, str)

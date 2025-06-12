@@ -1,44 +1,22 @@
-import pytest
+"""
+Tests para las funciones de base de datos en el módulo db.
+"""
+
 from app import db
+from tests.utils.mock_db import mock_connect_basic
 
 
 def test_init_db(monkeypatch):
-    def mock_connect(*args, **kwargs):
-        class MockConn:
-            def cursor(self):
-                return self
-
-            def execute(self, q):
-                pass
-
-            def commit(self):
-                pass
-
-            def close(self):
-                pass
-
-        return MockConn()
-
-    monkeypatch.setattr("app.db.psycopg2.connect", mock_connect)
+    """
+    Prueba la función init_db con una conexión simulada.
+    """
+    monkeypatch.setattr("app.db.psycopg2.connect", mock_connect_basic)
     db.init_db()
 
 
 def test_save_interaction(monkeypatch):
-    def mock_connect(*args, **kwargs):
-        class MockConn:
-            def cursor(self):
-                return self
-
-            def execute(self, q, args):
-                pass
-
-            def commit(self):
-                pass
-
-            def close(self):
-                pass
-
-        return MockConn()
-
-    monkeypatch.setattr("app.db.psycopg2.connect", mock_connect)
+    """
+    Prueba la función save_interaction con una conexión simulada.
+    """
+    monkeypatch.setattr("app.db.psycopg2.connect", mock_connect_basic)
     db.save_interaction("user1", "Hola", "Hola legal")

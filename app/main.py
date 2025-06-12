@@ -1,12 +1,14 @@
 """Módulo principal que define el servidor FastAPI del chatbot legal."""
 
 import os
-from fastapi import FastAPI, Request, Depends, HTTPException
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+
+from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from loguru import logger
-from app.openai_client import generate_response
+
 from app.db import init_db, save_interaction
 from app.monitor import setup_monitoring
+from app.openai_client import generate_response
 
 app = FastAPI()
 security = HTTPBearer()

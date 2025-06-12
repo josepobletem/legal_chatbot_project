@@ -1,6 +1,7 @@
 """Módulo para inicializar y guardar interacciones en la base de datos PostgreSQL."""
 
 import os
+
 import psycopg2
 
 

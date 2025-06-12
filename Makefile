@@ -1,5 +1,8 @@
+.PHONY: install test lint format ci
+
 install:
 	pip install -r requirements.txt
+	pip install pylint isort pytest
 
 test:
 	pytest
@@ -7,4 +10,7 @@ test:
 lint:
 	pylint app tests
 
-ci: install lint test
+format:
+	isort app tests
+
+ci: install format lint test

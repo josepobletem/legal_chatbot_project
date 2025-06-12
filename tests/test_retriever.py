@@ -1,35 +1,31 @@
-def retrieve_context(query: str) -> str:
+"""
+Tests para verificar la recuperación de contexto legal simulado en retriever.py.
+"""
+
+from app.retriever import retrieve_context
+
+
+def test_retrieve_context_with_match():
     """
-    Recupera el contexto legal más relevante para una consulta dada.
-
-    Esta versión simula una recuperación basada en coincidencias de palabras clave,
-    incluyendo variaciones comunes asociadas a despidos laborales.
-
-    Parameters
-    ----------
-    query : str
-        La pregunta del usuario en lenguaje natural.
+    Valida que se recupere contexto legal adecuado cuando se detecta una palabra clave relacionada.
 
     Returns
     -------
-    str
-        Fragmento de texto legal relevante (simulado) o una respuesta genérica si no hay coincidencia.
+    None
     """
-    query_lower = query.lower()
+    query = "¿Qué dice el Código del Trabajo sobre el despido?"
+    context = retrieve_context(query)
+    assert "Artículo 161" in context
 
-    palabras_clave = [
-        "despido",
-        "despedido",
-        "despedir",
-        "necesidades de la empresa",
-        "término del contrato",
-    ]
 
-    if any(palabra in query_lower for palabra in palabras_clave):
-        return (
-            "Artículo 161 del Código del Trabajo: El empleador puede poner término al contrato "
-            "de trabajo por necesidades de la empresa, tales como bajas en productividad, "
-            "innovaciones tecnológicas o cambios en el mercado."
-        )
+def test_retrieve_context_no_match():
+    """
+    Verifica que se devuelva una respuesta genérica cuando no hay coincidencia con palabras clave.
 
-    return "No se encontró contexto legal relevante, responde de forma general."
+    Returns
+    -------
+    None
+    """
+    query = "¿Qué pasa si llego tarde al trabajo?"
+    context = retrieve_context(query)
+    assert context == "No se encontró contexto legal relevante, responde de forma general."

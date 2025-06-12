@@ -7,6 +7,7 @@ import pickle
 from typing import List
 
 import faiss
+import numpy as np
 from loguru import logger
 from sentence_transformers import SentenceTransformer
 
@@ -49,17 +50,18 @@ def build_faiss_index() -> None:
         logger.warning("No se encontraron documentos en el directorio '%s'.", DOCS_PATH)
         return
 
-    embeddings = model.encode(docs, convert_to_numpy=True)
+    # Conversión explícita a float32 para compatibilidad con FAISS
+    embeddings = np.asarray(model.encode(docs, convert_to_numpy=True)).astype("float32")
 
     if embeddings is None or len(embeddings) == 0:
         logger.warning("No se pudieron generar embeddings.")
         return
 
-    # Usa dimensión segura si embeddings está mal formado
     dim = embeddings.shape[1] if len(embeddings.shape) > 1 else 384
-
     index = faiss.IndexFlatL2(dim)
-    index.add(embeddings)
+
+    # ✅ Ignoramos falso positivo de pylint para método .add()
+    index.add(embeddings)  # pylint: disable=no-value-for-parameter
 
     os.makedirs(EMBEDDINGS_PATH, exist_ok=True)
     faiss.write_index(index, os.path.join(EMBEDDINGS_PATH, "index.faiss"))
