@@ -28,4 +28,6 @@ def test_retrieve_context_no_match():
     """
     query = "¿Qué pasa si llego tarde al trabajo?"
     context = retrieve_context(query)
-    assert context == "No se encontró contexto legal relevante, responde de forma general."
+    assert (
+        context == "No se encontró contexto legal relevante, responde de forma general."
+    )

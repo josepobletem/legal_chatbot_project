@@ -7,6 +7,11 @@ repos:
       - id: check-yaml
       - id: check-added-large-files
 
+  - repo: https://github.com/psf/black
+    rev: 24.3.0  # Usa la última versión estable
+    hooks:
+      - id: black
+
   - repo: https://github.com/pycqa/isort
     rev: 5.13.2
     hooks:

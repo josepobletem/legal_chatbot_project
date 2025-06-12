@@ -15,7 +15,9 @@ def test_chat(monkeypatch):
     """
     Prueba el endpoint /chat utilizando mocks para OpenAI y PostgreSQL.
     """
-    monkeypatch.setattr("app.openai_client.openai.OpenAI", lambda api_key=None: MockClient())
+    monkeypatch.setattr(
+        "app.openai_client.openai.OpenAI", lambda api_key=None: MockClient()
+    )
     monkeypatch.setattr("app.db.psycopg2.connect", mock_connect_basic)
 
     response = client.post(

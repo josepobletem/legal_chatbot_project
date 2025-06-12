@@ -4,13 +4,16 @@ Mocks reutilizables para simular respuestas del cliente OpenAI en tests.
 
 # pylint: disable=too-few-public-methods
 
+
 class MockMessage:
     """Simula el contenido del mensaje devuelto por OpenAI."""
+
     content = "Respuesta simulada"
 
 
 class MockChoice:
     """Simula una opción de respuesta dentro de 'choices'."""
+
     message = MockMessage()
 
 
@@ -25,9 +28,11 @@ class MockCompletions:
 
 class MockChat:
     """Simula el cliente de chat."""
+
     completions = MockCompletions()
 
 
 class MockClient:
     """Simula el cliente OpenAI."""
+
     chat = MockChat()

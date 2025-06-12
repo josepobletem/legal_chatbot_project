@@ -4,6 +4,7 @@ Módulo de recuperación de contexto legal para el chatbot.
 Simula la búsqueda de fragmentos legales relevantes a partir de una consulta del usuario.
 """
 
+
 def retrieve_context(query: str) -> str:
     """
     Simula la recuperación de contexto legal relevante para la consulta del usuario.

@@ -12,7 +12,9 @@ def test_generate_response_format(monkeypatch):
     Verifica que generate_response devuelva una string esperada
     al simular la respuesta del cliente OpenAI con monkeypatch.
     """
-    monkeypatch.setattr("app.openai_client.openai.OpenAI", lambda api_key=None: MockClient())
+    monkeypatch.setattr(
+        "app.openai_client.openai.OpenAI", lambda api_key=None: MockClient()
+    )
 
     response = generate_response("¿Cuál es la ley laboral actual?")
     assert isinstance(response, str)

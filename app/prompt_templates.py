@@ -2,6 +2,7 @@
 Módulo de construcción de prompts para consultas legales laborales chilenas.
 """
 
+
 def prompt_laboral_chile(context: str, pregunta: str) -> str:
     """
     Construye un prompt especializado para consultas de derecho laboral chileno.
