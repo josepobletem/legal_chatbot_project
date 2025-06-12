@@ -1,8 +1,13 @@
 fastapi
 uvicorn
-openai
+openai>=1.0
 psycopg2-binary
 loguru
 prometheus_client
 python-dotenv
 pytest
+psycopg2
+loguru
+prometheus_client
+faiss-cpu
+sentence-transformers

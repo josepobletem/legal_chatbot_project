@@ -49,6 +49,42 @@ La plataforma permite a los usuarios interactuar mediante lenguaje natural, reci
 
 ---
 
+## 🧩 Funcionalidades destacadas
+
+| Módulo                   | Descripción                                                                 |
+|--------------------------|-----------------------------------------------------------------------------|
+| `/chat` endpoint         | Recibe preguntas legales, aplica RAG y responde en lenguaje natural.        |
+| `prompt_templates.py`    | Prompts legales por especialidad: laboral, tributario, civil, etc.          |
+| `retriever.py`           | Recupera contexto legal relevante para cada pregunta.                       |
+| `embedder.py`            | Indexa documentos legales y construye FAISS (o Chroma) para RAG.            |
+| `auth.py`                | Verifica tokens en headers para proteger endpoints.                         |
+| `db.py`                  | Guarda las preguntas/respuestas con timestamp.
+
+
+## 🧠 Ejemplo de flujo RAG
+
+1. El usuario envía:
+   `"¿Qué derechos tengo si me despiden por necesidades de la empresa?"`
+
+2. El sistema busca contexto legal relevante (ej: Art. 161 del Código del Trabajo).
+
+3. Se genera un prompt como:
+
+```text
+Actúa como un abogado laboral chileno experto en el Código del Trabajo.
+Usa el siguiente contexto legal para responder con precisión:
+
+Artículo 161: Despido por necesidades de la empresa...
+
+Pregunta:
+¿Qué derechos tengo si me despiden por necesidades de la empresa?
+
+Respuesta:
+...
+
+4. GPT responde de forma especializada y fundamentada.
+```
+
 ## 📦 Instalación rápida (local)
 
 ### Requisitos
@@ -66,7 +102,7 @@ make install
 docker-compose up --build
 ```
 
-Accede a la API en: [http://localhost:8000/docs](http://localhost:8000/docs)  
+Accede a la API en: [http://localhost:8000/docs](http://localhost:8000/docs)
 Prometheus en: [http://localhost:9090](http://localhost:9090)
 
 ---
@@ -194,3 +230,13 @@ docker build -t chatbot .
 docker tag chatbot:latest <ecr_repo_url>:latest
 docker push <ecr_repo_url>:latest
 ```
+
+## 📈 Monitoreo y logs
+
+    Loguru configurado para logging estructurado
+
+    Puedes extender con Prometheus/Grafana
+
+## 🧠 Créditos
+
+Este proyecto está desarrollado por José Poblete M. y Chatgpt 4o, para profesionales del derecho y tecnología, con foco en acceso justo a la información legal automatizada.
