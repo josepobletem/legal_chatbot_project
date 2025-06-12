@@ -6,3 +6,8 @@ loguru
 prometheus_client
 python-dotenv
 pytest
+psycopg2
+loguru
+prometheus_client
+faiss-cpu
+sentence-transformers

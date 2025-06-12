@@ -23,13 +23,19 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Lint code
+      - name: Format code with Black
+        run: |
+          pip install black
+          black --check app tests
+
+      - name: Lint code with Pylint
         run: |
           pip install pylint
           pylint app tests
 
       - name: Run unit tests
         run: |
+          pip install pytest
           pytest
 
       - name: Validate presence of critical files
@@ -40,5 +46,3 @@ jobs:
           test -f terraform/variables.tf
           test -f terraform/outputs.tf
         shell: bash
-
-
