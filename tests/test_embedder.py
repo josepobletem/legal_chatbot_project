@@ -4,6 +4,7 @@ from app import embedder
 DOCS_DIR: str = "app/docs"
 DOC_FILE: str = os.path.join(DOCS_DIR, "ejemplo_despido.txt")
 
+
 def init_test_docs() -> None:
     """
     Inicializa un archivo de prueba legal en app/docs/.
@@ -28,6 +29,7 @@ def init_test_docs() -> None:
                 "de servicio con un máximo de 330 días, salvo pacto diferente."
             )
 
+
 def test_build_faiss_index() -> None:
     """
     Testea que el índice FAISS se construya correctamente desde documentos legales.
@@ -44,4 +46,3 @@ def test_build_faiss_index() -> None:
 
     assert os.path.exists("app/vector_index/index.faiss")
     assert os.path.exists("app/vector_index/docs.pkl")
-

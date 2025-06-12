@@ -22,7 +22,7 @@ def retrieve_context(query: str) -> str:
         "despedido",
         "despedir",
         "necesidades de la empresa",
-        "término del contrato"
+        "término del contrato",
     ]
 
     if any(palabra in query_lower for palabra in palabras_clave):
@@ -33,4 +33,3 @@ def retrieve_context(query: str) -> str:
         )
 
     return "No se encontró contexto legal relevante, responde de forma general."
-
