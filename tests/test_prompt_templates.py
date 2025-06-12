@@ -11,4 +11,5 @@ def test_prompt_laboral_chile():
 
     assert "Artículo 161" in prompt
     assert "¿Qué significa esto legalmente?" in prompt
-    assert "derecho laboral chileno" in prompt
+    assert "abogado laboral chileno" in prompt
+    assert "Código del Trabajo" in prompt
