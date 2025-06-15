@@ -11,6 +11,9 @@ services:
       - API_TOKEN=secret-token
     depends_on:
       - db
+    volumes:
+      - .:/app
+    restart: unless-stopped
 
   db:
     image: postgres:13
@@ -20,6 +23,9 @@ services:
       POSTGRES_PASSWORD: pass
     ports:
       - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    restart: unless-stopped
 
   prometheus:
     image: prom/prometheus
@@ -27,3 +33,9 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
+    depends_on:
+      - web
+    restart: unless-stopped
+
+volumes:
+  db_data:
