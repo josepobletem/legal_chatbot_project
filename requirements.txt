@@ -11,3 +11,5 @@ loguru
 prometheus_client
 faiss-cpu
 sentence-transformers
+pydantic
+google-cloud-aiplatform>=1.38.0

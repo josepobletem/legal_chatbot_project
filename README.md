@@ -126,6 +126,13 @@ make test
 ```
 
 ---
+## 🔧 Uso desde terminal:
+
+```bash
+bash run.sh dev
+bash run.sh int
+bash run.sh prod
+```
 
 ## 📈 Monitoreo
 
@@ -233,9 +240,158 @@ docker push <ecr_repo_url>:latest
 
 ## 📈 Monitoreo y logs
 
-    Loguru configurado para logging estructurado
+# Dashboards de Grafana para Legal Chatbot Project
 
-    Puedes extender con Prometheus/Grafana
+Este directorio contiene la configuración necesaria para que Grafana cargue automáticamente datasources y dashboards personalizados al iniciar con Docker Compose.
+
+## Estructura
+
+```
+grafana/
+└── provisioning/
+    ├── datasources/
+    │   └── prometheus.yaml
+    └── dashboards/
+        ├── dashboard.yaml
+        └── mi_dashboard.json
+```
+
+- **datasources/prometheus.yaml**: Configura Prometheus como fuente de datos.
+- **dashboards/dashboard.yaml**: Indica a Grafana dónde buscar dashboards.
+- **dashboards/mi_dashboard.json**: Dashboard(s) exportados desde Grafana en formato JSON.
+
+## ¿Cómo agregar un dashboard?
+
+1. Crea o edita un dashboard en la interfaz de Grafana.
+2. Exporta el dashboard como JSON.
+3. Guarda el archivo exportado en `grafana/provisioning/dashboards/`.
+
+## ¿Cómo funciona?
+
+Al iniciar Grafana con Docker Compose, se cargarán automáticamente:
+- El datasource de Prometheus.
+- Todos los dashboards JSON ubicados en `grafana/provisioning/dashboards/`.
+
+## Acceso
+
+- Grafana estará disponible en: [http://localhost:3000](http://localhost:3000)
+- Usuario/contraseña por defecto: `admin` / `admin`
+
+## Referencias
+
+- [Documentación oficial de provisión de Grafana](https://grafana.com/docs/grafana/latest/administration/provisioning/)
+
+
+# Integración de Vertex AI en Legal Chatbot Project
+
+Esta integración permite consultar modelos de lenguaje alojados en Vertex AI directamente desde la API del chatbot legal e incluye integración con Google Cloud Monitoring (Stackdriver) y Vertex AI para trazas, métricas y predicciones avanzadas.
+
+## ¿Qué hace esta integración?
+
+- Expone un endpoint `/vertexai-legal-answer` en la API.
+- Permite enviar preguntas legales y obtener respuestas generadas por un modelo desplegado en Vertex AI.
+- Facilita la conexión segura usando credenciales de Google Cloud.
+
+## Archivos relevantes
+
+- `app/vertex_ai_router.py`: Contiene el router y la lógica para consultar Vertex AI.
+- `app/main.py`: Incluye el router de Vertex AI en la aplicación FastAPI.
+
+## Configuración
+
+1. **Credenciales de Google Cloud**
+   - Descarga una cuenta de servicio con permisos de Vertex AI.
+   - Guarda el archivo JSON en una ruta segura.
+
+2. **Variables de entorno**
+   Puedes definir estas variables en tu entorno o en un archivo `.env`:
+   ```
+   GCP_PROJECT_ID=tu-proyecto
+   VERTEX_PROJECT_ID=tu-proyecto
+   VERTEX_LOCATION=us-central1
+   VERTEX_ENDPOINT_ID=tu-endpoint-id
+   VERTEX_CREDENTIALS_PATH=/ruta/a/credenciales.json
+   ```
+
+3. **Instala dependencias**
+   ```
+   pip install google-cloud-aiplatform
+   ```
+   Si tienes problemas con las versiones de las dependencias, puedes instalar las siguientes dependencias específicas:
+   ```
+   pip install google-cloud-aiplatform==1.11.0 google-auth==1.24.0 google-auth-oauthlib==0.4.1 google-auth-httplib2==0.0.3 google-api-python-client==1.12.7
+   ```
+   ```
+   pip install google-cloud-aiplatform opentelemetry-sdk opentelemetry-exporter-google-cloud opentelemetry-instrumentation-fastapi
+   ```
+Para evitar conflictos de versiones, instala las siguientes dependencias específicas:
+
+```
+pip install opentelemetry-sdk==0.17b0 opentelemetry-api==0.17b0 opentelemetry-exporter-google-cloud==0.17b0 opentelemetry-instrumentation-fastapi
+```
+## Uso
+
+Haz una petición POST al endpoint `/vertexai-legal-answer` con el parámetro `question`:
+
+```
+POST /vertexai-legal-answer
+Content-Type: application/json
+
+{
+  "question": "¿Cuál es la ley de propiedad intelectual en mi país?"
+}
+```
+
+**Respuesta:**
+```json
+{
+  "answer": "Respuesta generada por el modelo de Vertex AI."
+}
+```
+## Notas
+
+- Asegúrate de que tu endpoint de Vertex AI esté desplegado y accesible.
+- Puedes adaptar el endpoint para recibir otros parámetros según tu modelo.
+- Consulta la [documentación oficial de Vertex AI](https://cloud.google.com/vertex-ai/docs) para más detalles sobre
+
+
+# Integración de Google Cloud Monitoring y Vertex AI en Legal Chatbot Project
+
+Este proyecto ahora incluye integración con Google Cloud Monitoring (Stackdriver) y Vertex AI para trazas, métricas y predicciones avanzadas.
+
+## Funcionalidades agregadas
+
+1. **Google Cloud Monitoring**:
+   - Exporta métricas y trazas de la aplicación a GCP Monitoring y Cloud Trace.
+   - Usa OpenTelemetry para instrumentar la aplicación FastAPI.
+
+2. **Vertex AI**:
+   - Endpoint `/vertexai-legal-answer` que consulta modelos de lenguaje alojados en Vertex AI.
+   - Permite enviar preguntas legales y obtener respuestas generadas por modelos personalizados.
+
+---
+
+## Archivos relevantes
+
+### GCP Monitoring
+- `app/gcp_monitoring.py`: Configura la exportación de métricas y trazas a GCP Monitoring.
+- `main.py`: Inicializa GCP Monitoring en el evento de startup.
+
+### Vertex AI
+- `app/vertex_ai_router.py`: Contiene el router y la lógica para consultar Vertex AI.
+- `main.py`: Incluye el router de Vertex AI en la aplicación FastAPI.
+
+---
+### Métricas y trazas
+- Las métricas y trazas estarán disponibles en la consola de GCP:
+  - **Monitoring**: [https://console.cloud.google.com/monitoring](https://console.cloud.google.com/monitoring)
+  - **Trace**: [https://console.cloud.google.com/traces](https://console.cloud.google.com/traces)
+
+## Referencias
+
+- [Google Cloud Monitoring](https://cloud.google.com/monitoring/docs)
+- [Vertex AI](https://cloud.google.com/vertex-ai/docs)
+- [OpenTelemetry](https://opentelemetry.io/docs/)
 
 ## 🧠 Créditos
 

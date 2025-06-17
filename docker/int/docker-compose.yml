@@ -1,0 +1,45 @@
+version: "3.9"
+
+services:
+  web:
+    build:
+      context: ../../
+    container_name: chatbot-api-int
+    ports:
+      - "8100:8000"
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      DATABASE_URL: ${DATABASE_URL}
+      API_TOKEN: ${API_TOKEN}
+    depends_on:
+      - db
+    volumes:
+      - ../../:/app
+    restart: always
+
+  db:
+    image: postgres:13
+    container_name: chatbot-db-int
+    environment:
+      POSTGRES_DB: chatbot_int
+      POSTGRES_USER: int_user
+      POSTGRES_PASSWORD: int_pass
+    ports:
+      - "5434:5432"
+    volumes:
+      - db_data_int:/var/lib/postgresql/data
+    restart: always
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus-int
+    ports:
+      - "9092:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - web
+    restart: always
+
+volumes:
+  db_data_int:

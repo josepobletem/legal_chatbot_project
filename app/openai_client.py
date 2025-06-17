@@ -7,6 +7,7 @@ y consulta a OpenAI para generar respuestas precisas.
 
 import os
 
+# pylint: disable=import-error
 import openai
 
 from app.prompt_templates import prompt_laboral_chile

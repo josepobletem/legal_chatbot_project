@@ -28,6 +28,11 @@ jobs:
           pip install black
           black --check app tests
 
+      - name: Sort imports with isort
+        run: |
+          pip install isort
+          isort --check-only app tests
+
       - name: Lint code with Pylint
         run: |
           pip install pylint

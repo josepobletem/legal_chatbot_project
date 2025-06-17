@@ -1,33 +1,20 @@
 """
-Tests de integración para el endpoint /chat del chatbot legal.
+[✓] Tests de integración para el endpoint /chat del chatbot legal.
 """
 
-from fastapi.testclient import TestClient
+# pylint: disable=redefined-outer-name
+# pylint: disable=import-error
+# pylint: disable=unused-import
 
-from app.main import app
-from tests.utils.mock_db import mock_connect_basic
-from tests.utils.mock_openai import MockClient
-
-client = TestClient(app)
+from tests.utils.assertions import assert_chat_respuesta_simulada
+from tests.utils.common_fixtures import client
 
 
-def test_chat(monkeypatch):
+def test_chat(client):
     """
-    Prueba el endpoint /chat utilizando mocks para OpenAI y PostgreSQL.
+    [
+        ✓ POST /chat con token válido.
+        ✓ Verifica status 200 y respuesta simulada.
+    ]
     """
-    monkeypatch.setattr(
-        "app.openai_client.openai.OpenAI", lambda api_key=None: MockClient()
-    )
-    monkeypatch.setattr("app.db.psycopg2.connect", mock_connect_basic)
-
-    response = client.post(
-        "/chat",
-        headers={"Authorization": "Bearer secret-token"},
-        json={
-            "user_id": "test",
-            "mensaje": "Hola, ¿cuáles son mis derechos laborales?",
-        },
-    )
-
-    assert response.status_code == 200
-    assert response.json()["respuesta"] == "Respuesta simulada"
+    assert_chat_respuesta_simulada(client)

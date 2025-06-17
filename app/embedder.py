@@ -6,6 +6,7 @@ import os
 import pickle
 from typing import List
 
+# pylint: disable=import-error
 import faiss
 import numpy as np
 from loguru import logger

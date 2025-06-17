@@ -2,7 +2,7 @@
 
 install:
 	pip install -r requirements.txt
-	pip install pylint isort pytest
+	pip install pylint isort pytest black
 
 test:
 	pytest
