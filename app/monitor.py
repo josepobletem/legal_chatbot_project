@@ -1,5 +1,6 @@
 """Módulo para instrumentación y monitoreo usando Prometheus en FastAPI."""
 
+# pylint: disable=import-error
 from prometheus_client import Counter, Histogram, make_asgi_app
 
 # Métricas definidas para contar peticiones y medir latencia

@@ -2,6 +2,7 @@
 
 import os
 
+# pylint: disable=import-error
 import psycopg2
 
 

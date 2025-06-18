@@ -2,28 +2,26 @@
 Tests para la función de autorización de tokens en el chatbot legal.
 """
 
-# pylint: disable=wrong-import-position
+# pylint: disable=import-error
 
-import os
-import sys
-
+import pytest
 from fastapi import HTTPException
 from fastapi.security import HTTPAuthorizationCredentials
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from app.main import authorize
 
 
 def test_invalid_token():
     """
-    Prueba que un token inválido arroje una excepción HTTP 403.
-
-    Crea un objeto de credenciales con un token incorrecto
-    y valida que la función `authorize` rechace la petición.
+    [
+        ✓ Verifica que un token inválido dispare una excepción HTTP 403.
+    ]
     """
-    invalid = HTTPAuthorizationCredentials(scheme="Bearer", credentials="wrong")
-    try:
-        authorize(invalid)
-    except HTTPException as e:
-        assert e.status_code == 403
+    invalid_credentials = HTTPAuthorizationCredentials(
+        scheme="Bearer", credentials="wrong"
+    )
+
+    with pytest.raises(HTTPException) as exc_info:
+        authorize(invalid_credentials)
+
+    assert exc_info.value.status_code == 403

@@ -1,24 +1,36 @@
 """
-Tests para verificar el acceso al endpoint de documentación interactiva (/docs).
+[✓] Tests de integración para los endpoints principales del chatbot legal.
 """
 
-from fastapi.testclient import TestClient
-
-from app.main import app
-
-client = TestClient(app)
+# pylint: disable=redefined-outer-name
+# pylint: disable=import-error
+# pylint: disable=unused-import
 
 
-def test_docs_accessible():
+from tests.utils.assertions import assert_chat_respuesta_simulada
+from tests.utils.common_fixtures import client
+
+
+def test_chat_token_valido(client):
     """
-    Verifica que el endpoint /docs esté accesible y funcionando correctamente.
-
-    Este test comprueba que la documentación automática de FastAPI
-    (basada en Swagger UI) responde con un código HTTP 200.
-
-    Returns
-    -------
-    None
+    [
+        ✓ POST /chat con token válido.
+        ✓ Verifica status 200 y respuesta simulada.
+    ]
     """
-    response = client.get("/docs")
-    assert response.status_code == 200
+    assert_chat_respuesta_simulada(client)
+
+
+def test_chat_token_invalido(client):
+    """
+    [
+        ✗ POST /chat con token inválido.
+        ✓ Verifica que retorne 403.
+    ]
+    """
+    response = client.post(
+        "/chat",
+        headers={"Authorization": "Bearer wrong-token"},
+        json={"user_id": "test", "mensaje": "¿Qué es un finiquito?"},
+    )
+    assert response.status_code == 403

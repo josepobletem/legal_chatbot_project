@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  web:
+    build:
+      context: ../../
+    container_name: chatbot-api-prod
+    ports:
+      - "8200:8000"
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      DATABASE_URL: ${DATABASE_URL}
+      API_TOKEN: ${API_TOKEN}
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: postgres:13
+    container_name: chatbot-db-prod
+    environment:
+      POSTGRES_DB: chatbot_prod
+      POSTGRES_USER: prod_user
+      POSTGRES_PASSWORD: prod_pass
+    ports:
+      - "5435:5432"
+    volumes:
+      - db_data_prod:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus-prod
+    ports:
+      - "9093:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - web
+    restart: unless-stopped
+
+volumes:
+  db_data_prod:
