@@ -41,6 +41,7 @@ jobs:
       - name: Run unit tests
         run: |
           pip install pytest
+          export PYTHONPATH=.
           pytest
 
       - name: Validate presence of critical files
