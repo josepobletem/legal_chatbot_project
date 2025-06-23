@@ -1,6 +1,7 @@
 terraform {
+  required_version = ">= 1.6.0"
+
   backend "local" {
-    bucket  = "terraform-state-legal-chatbot"
-    prefix  = "env/prod"
+    path = "terraform.tfstate"
   }
 }
