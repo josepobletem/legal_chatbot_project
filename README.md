@@ -154,6 +154,90 @@ API_TOKEN=secret-token
 
 MIT
 
+## ☁️ Despliegue con Terraform por ambientes.
+
+```
+terraform/
+├── env/
+│   ├── dev/
+│   │   ├── main.tf
+│   │   ├── variables.tf
+│   │   ├── terraform.tfvars
+│   │   ├── outputs.tf
+│   │   └── backend.tf   (si usas state remoto)
+│
+│   ├── stg/
+│   │   ├── main.tf
+│   │   ├── variables.tf
+│   │   ├── terraform.tfvars
+│   │   ├── outputs.tf
+│   │   └── backend.tf
+│
+│   ├── prod/
+│   │   ├── main.tf
+│   │   ├── variables.tf
+│   │   ├── terraform.tfvars
+│   │   ├── outputs.tf
+│   │   └── backend.tf
+│
+└── modules/
+    └── app_infra/
+        ├── main.tf
+        ├── variables.tf
+        ├── outputs.tf
+```
+
+### 🚀 Despliegue de infraestructura con Terraform
+
+El proyecto incluye una configuración de Terraform para desplegar en GCP:
+
+    API Legal Chatbot (Cloud Run)
+
+    Base de datos PostgreSQL (CloudSQL)
+
+    Variables y secretos (OPENAI_API_KEY, API_TOKEN)
+
+    Infraestructura separada por entornos: dev, stg, prod
+
+| Rama Git    | Entorno desplegado                |
+| ----------- | --------------------------------- |
+| `develop`   | `terraform/env/dev`               |
+| `main`      | `terraform/env/prod`              |
+| `feature/*` | Solo `terraform plan` (modo test) |
+
+### 🏗️ Requisitos:
+
+    Terraform ≥ 1.6
+
+    Google Cloud project habilitado
+
+    Service Account con permisos:
+
+        Cloud Run Admin
+
+        CloudSQL Admin
+
+        Storage Admin (para backend remoto)
+
+    Secret GCP_SA_KEY configurado en GitHub Secrets
+
+
+🚀 Para pruebas locales:
+
+```bash
+cd terraform/env/dev
+terraform init
+terraform plan
+terraform apply
+```
+
+y ademas un Makefile para desplegar en local:
+
+```bash
+make terraform-init-dev
+make terraform-plan-dev
+make terraform-apply-dev
+```
 
 ## ☁️ Despliegue con Terraform en GCP
 
@@ -355,31 +439,45 @@ Content-Type: application/json
 - Consulta la [documentación oficial de Vertex AI](https://cloud.google.com/vertex-ai/docs) para más detalles sobre
 
 
-# Integración de Google Cloud Monitoring y Vertex AI en Legal Chatbot Project
+## 🔐 Autenticación
 
-Este proyecto ahora incluye integración con Google Cloud Monitoring (Stackdriver) y Vertex AI para trazas, métricas y predicciones avanzadas.
+El proyecto ahora utiliza autenticación basada en JWT (JSON Web Token) para proteger los endpoints.
 
-## Funcionalidades agregadas
+### 🔄 Obtener un token (refresh-token)
 
-1. **Google Cloud Monitoring**:
-   - Exporta métricas y trazas de la aplicación a GCP Monitoring y Cloud Trace.
-   - Usa OpenTelemetry para instrumentar la aplicación FastAPI.
+Puedes obtener un token válido llamando al endpoint:
 
-2. **Vertex AI**:
-   - Endpoint `/vertexai-legal-answer` que consulta modelos de lenguaje alojados en Vertex AI.
-   - Permite enviar preguntas legales y obtener respuestas generadas por modelos personalizados.
+```bash
+curl -X POST http://localhost:8000/auth/refresh-token
+```
 
----
+Esto devuelve:
 
-## Archivos relevantes
+```json
+{
+    "access_token": "eyJhbGciOiJIUzI1NiIs...",
+    "token_type": "bearer"
+}
+```
 
-### GCP Monitoring
-- `app/gcp_monitoring.py`: Configura la exportación de métricas y trazas a GCP Monitoring.
-- `main.py`: Inicializa GCP Monitoring en el evento de startup.
+📥 Usar el token en los endpoints
 
-### Vertex AI
-- `app/vertex_ai_router.py`: Contiene el router y la lógica para consultar Vertex AI.
-- `main.py`: Incluye el router de Vertex AI en la aplicación FastAPI.
+Debes incluir el token JWT en el header Authorization: Bearer para consumir los endpoints protegidos:
+
+```bash
+curl -X POST http://localhost:8000/chat \
+-H "Authorization: Bearer TU_TOKEN_AQUI" \
+-H "Content-Type: application/json" \
+-d '{"user_id": "user123", "mensaje": "¿Cuál es el plazo de prescripción para deudas en Chile?"}'
+```
+o bien:
+
+```bash
+curl -X POST http://localhost:8000/vertexai-legal-answer \
+-H "Authorization: Bearer TU_TOKEN_AQUI" \
+-H "Content-Type: application/json" \
+-d '{"question": "¿Cuál es el plazo de prescripción para deudas en Chile?"}'
+```
 
 ---
 ### Métricas y trazas

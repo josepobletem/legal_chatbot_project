@@ -1,14 +1,18 @@
 """
-Router para consultas legales usando Vertex AI.
+vertex_ai_router.py
+
+Router para consultas legales usando Vertex AI, protegido con JWT.
 """
 
 import os
 
 # pylint: disable=import-error
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from google.cloud import aiplatform
 from google.oauth2 import service_account
 from pydantic import BaseModel
+
+from app.auth import authorize
 
 router = APIRouter()
 
@@ -31,7 +35,9 @@ class QuestionRequest(BaseModel):
 
 
 @router.post("/vertexai-legal-answer")
-def vertexai_legal_answer(req: QuestionRequest):
+def vertexai_legal_answer(
+    req: QuestionRequest, _=Depends(authorize)  # Protección con JWT
+):
     """
     Consulta un modelo de Vertex AI para responder preguntas legales.
 

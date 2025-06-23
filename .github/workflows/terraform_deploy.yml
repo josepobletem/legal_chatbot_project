@@ -1,0 +1,35 @@
+name: Deploy Terraform GCP (Test mode)
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - feature/*
+      - prueba/*
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.2
+
+      - name: Terraform Init & Plan DEV
+        if: github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/')
+        run: |
+          cd terraform/env/dev
+          terraform init
+          terraform plan
+
+      - name: Terraform Init & Plan PROD
+        if: github.ref == 'refs/heads/main'
+        run: |
+          cd terraform/env/prod
+          terraform init
+          terraform plan
