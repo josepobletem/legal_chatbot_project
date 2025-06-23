@@ -1,12 +1,12 @@
-# .github/workflows/terraform_deploy.yml
-
-name: Deploy Terraform GCP
+name: Deploy Terraform GCP (Test mode)
 
 on:
   push:
     branches:
       - main
       - develop
+      - feature/*
+      - prueba/*
 
 jobs:
   deploy:
@@ -20,16 +20,16 @@ jobs:
         with:
           terraform_version: 1.6.2
 
-      - name: Terraform Init & Apply DEV
-        if: github.ref == 'refs/heads/develop'
+      - name: Terraform Init & Plan DEV
+        if: github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/')
         run: |
           cd terraform/env/dev
           terraform init
-          terraform apply -auto-approve
+          terraform plan
 
-      - name: Terraform Init & Apply PROD
+      - name: Terraform Init & Plan PROD
         if: github.ref == 'refs/heads/main'
         run: |
           cd terraform/env/prod
           terraform init
-          terraform apply -auto-approve
+          terraform plan
