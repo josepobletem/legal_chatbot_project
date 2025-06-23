@@ -1,5 +1,5 @@
 terraform {
-  backend "gcs" {
+  backend "local" {
     bucket  = "terraform-state-legal-chatbot"
     prefix  = "env/prod"
   }

@@ -1,6 +1,5 @@
 terraform {
-  backend "gcs" {
-    bucket  = "terraform-state-legal-chatbot"
-    prefix  = "env/dev"
+  backend "local" {
+    path = "terraform.tfstate"
   }
 }
