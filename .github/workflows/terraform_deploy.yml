@@ -1,0 +1,35 @@
+# .github/workflows/terraform_deploy.yml
+
+name: Deploy Terraform GCP
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.2
+
+      - name: Terraform Init & Apply DEV
+        if: github.ref == 'refs/heads/develop'
+        run: |
+          cd terraform/env/dev
+          terraform init
+          terraform apply -auto-approve
+
+      - name: Terraform Init & Apply PROD
+        if: github.ref == 'refs/heads/main'
+        run: |
+          cd terraform/env/prod
+          terraform init
+          terraform apply -auto-approve
