@@ -354,6 +354,47 @@ Content-Type: application/json
 - Puedes adaptar el endpoint para recibir otros parámetros según tu modelo.
 - Consulta la [documentación oficial de Vertex AI](https://cloud.google.com/vertex-ai/docs) para más detalles sobre
 
+
+## 🔐 Autenticación
+
+El proyecto ahora utiliza autenticación basada en JWT (JSON Web Token) para proteger los endpoints.
+
+### 🔄 Obtener un token (refresh-token)
+
+Puedes obtener un token válido llamando al endpoint:
+
+```bash
+curl -X POST http://localhost:8000/auth/refresh-token
+```
+
+Esto devuelve:
+
+```json
+{
+    "access_token": "eyJhbGciOiJIUzI1NiIs...",
+    "token_type": "bearer"
+}
+```
+
+📥 Usar el token en los endpoints
+
+Debes incluir el token JWT en el header Authorization: Bearer para consumir los endpoints protegidos:
+
+```bash
+curl -X POST http://localhost:8000/chat \
+-H "Authorization: Bearer TU_TOKEN_AQUI" \
+-H "Content-Type: application/json" \
+-d '{"user_id": "user123", "mensaje": "¿Cuál es el plazo de prescripción para deudas en Chile?"}'
+```
+o bien:
+
+```bash
+curl -X POST http://localhost:8000/vertexai-legal-answer \
+-H "Authorization: Bearer TU_TOKEN_AQUI" \
+-H "Content-Type: application/json" \
+-d '{"question": "¿Cuál es el plazo de prescripción para deudas en Chile?"}'
+```
+
 ---
 ### Métricas y trazas
 - Las métricas y trazas estarán disponibles en la consola de GCP:

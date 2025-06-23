@@ -13,3 +13,5 @@ faiss-cpu
 sentence-transformers
 pydantic
 google-cloud-aiplatform>=1.38.0
+PyJWT>=2.8.0
+tiktoken>=0.5.1

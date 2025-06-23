@@ -15,12 +15,15 @@ def test_retrieve_context_with_match():
     """
     query = "¿Qué dice el Código del Trabajo sobre el despido?"
     context = retrieve_context(query)
-    assert "Artículo 161" in context
+
+    assert isinstance(context, list)
+    assert len(context) > 0
+    assert any("Artículo 161" in fragment for fragment in context)
 
 
 def test_retrieve_context_no_match():
     """
-    Verifica que se devuelva una respuesta genérica cuando no hay coincidencia con palabras clave.
+    Verifica que se devuelva una lista vacía cuando no hay coincidencia con palabras clave.
 
     Returns
     -------
@@ -28,6 +31,6 @@ def test_retrieve_context_no_match():
     """
     query = "¿Qué pasa si llego tarde al trabajo?"
     context = retrieve_context(query)
-    assert (
-        context == "No se encontró contexto legal relevante, responde de forma general."
-    )
+
+    assert isinstance(context, list)
+    assert not context

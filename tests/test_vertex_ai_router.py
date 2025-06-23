@@ -9,8 +9,9 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-import app.vertex_ai_router as vertex_module
-from app.vertex_ai_router import router as vertexai_router
+import app.routes.vertex_ai_router as vertex_module
+from app.routes.vertex_ai_router import router as vertexai_router
+from app.token_utils import create_access_token
 from tests.utils.mock_db import mock_connect_basic
 
 
@@ -31,7 +32,17 @@ def client(monkeypatch):
     return TestClient(test_app)
 
 
-def test_vertexai_legal_answer_success(client, monkeypatch):
+@pytest.fixture
+def valid_token():
+    """
+    [
+        ✓ Genera un token JWT válido para pruebas.
+    ]
+    """
+    return create_access_token(data={"sub": "test-user"})
+
+
+def test_vertexai_legal_answer_success(client, monkeypatch, valid_token):
     """
     [
         ✓ Test de éxito: POST /vertexai-legal-answer.
@@ -82,13 +93,14 @@ def test_vertexai_legal_answer_success(client, monkeypatch):
     response = client.post(
         "/vertexai-legal-answer",
         json={"question": "¿Cuál es el sueldo mínimo?"},
+        headers={"Authorization": f"Bearer {valid_token}"},
     )
 
     assert response.status_code == 200
     assert response.json()["answer"] == "Respuesta simulada de Vertex"
 
 
-def test_vertexai_legal_answer_error(client, monkeypatch):
+def test_vertexai_legal_answer_error(client, monkeypatch, valid_token):
     """
     [
         × Test de error: POST /vertexai-legal-answer.
@@ -137,6 +149,7 @@ def test_vertexai_legal_answer_error(client, monkeypatch):
     response = client.post(
         "/vertexai-legal-answer",
         json={"question": "¿Qué es el finiquito?"},
+        headers={"Authorization": f"Bearer {valid_token}"},
     )
 
     assert response.status_code == 500

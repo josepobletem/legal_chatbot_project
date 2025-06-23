@@ -1,30 +1,26 @@
-"""Módulo principal que define el servidor FastAPI del chatbot legal."""
+"""
+main.py
 
-import os
+Módulo principal que define el servidor FastAPI del chatbot legal.
+"""
 
 # pylint: disable=import-error
-from fastapi import Depends, FastAPI, HTTPException, Request, Response
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+
+from fastapi import Depends, FastAPI, Request, Response
 from loguru import logger
 from prometheus_client import generate_latest
 
-# App internals
+from app.auth import authorize
 from app.db import init_db, save_interaction
 from app.monitor import setup_monitoring
 from app.openai_client import generate_response
-from app.vertex_ai_router import router as vertex_ai_router
+from app.routes import auth_routes, vertex_ai_router
 
-# Instrumentación opcional
-# from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-
-# Inicializa la aplicación FastAPI
-app = FastAPI()
-
-# FastAPIInstrumentor.instrument_app(app)  # (Descomenta si usas OpenTelemetry)
-
-# Seguridad con token Bearer
-security = HTTPBearer()
-API_TOKEN = os.getenv("API_TOKEN", "secret-token")
+app = FastAPI(
+    title="Legal Chatbot API",
+    description="API para consultas legales usando Vertex AI + JWT Auth",
+    version="1.0.0",
+)
 
 
 @app.on_event("startup")
@@ -37,22 +33,8 @@ async def startup():
     logger.info("App iniciada correctamente.")
 
 
-def authorize(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    """
-    Valida el token de autorización enviado por el cliente.
-
-    Args:
-        credentials (HTTPAuthorizationCredentials): Credenciales del encabezado Authorization.
-
-    Raises:
-        HTTPException: Si el token no es válido.
-    """
-    if credentials.credentials != API_TOKEN:
-        raise HTTPException(status_code=403, detail="Token inválido")
-
-
 @app.post("/chat")
-async def chat(req: Request, _: HTTPAuthorizationCredentials = Depends(authorize)):
+async def chat(req: Request, _: str = Depends(authorize)):
     """
     Endpoint principal del chatbot legal. Recibe una pregunta y retorna una respuesta generada.
 
@@ -75,7 +57,7 @@ async def chat(req: Request, _: HTTPAuthorizationCredentials = Depends(authorize
 @app.get("/metrics")
 def metrics():
     """
-    Endpoint expone métricas Prometheus.
+    Endpoint que expone métricas Prometheus.
 
     Returns:
         Response: Métricas en texto plano.
@@ -83,5 +65,6 @@ def metrics():
     return Response(generate_latest(), media_type="text/plain")
 
 
-# Agrega el router de Vertex AI
-app.include_router(vertex_ai_router)
+# Montar routers externos
+app.include_router(auth_routes.router)
+app.include_router(vertex_ai_router.router)
