@@ -154,6 +154,90 @@ API_TOKEN=secret-token
 
 MIT
 
+## ☁️ Despliegue con Terraform por ambientes.
+
+```
+terraform/
+├── env/
+│   ├── dev/
+│   │   ├── main.tf
+│   │   ├── variables.tf
+│   │   ├── terraform.tfvars
+│   │   ├── outputs.tf
+│   │   └── backend.tf   (si usas state remoto)
+│
+│   ├── stg/
+│   │   ├── main.tf
+│   │   ├── variables.tf
+│   │   ├── terraform.tfvars
+│   │   ├── outputs.tf
+│   │   └── backend.tf
+│
+│   ├── prod/
+│   │   ├── main.tf
+│   │   ├── variables.tf
+│   │   ├── terraform.tfvars
+│   │   ├── outputs.tf
+│   │   └── backend.tf
+│
+└── modules/
+    └── app_infra/
+        ├── main.tf
+        ├── variables.tf
+        ├── outputs.tf
+```
+
+### 🚀 Despliegue de infraestructura con Terraform
+
+El proyecto incluye una configuración de Terraform para desplegar en GCP:
+
+    API Legal Chatbot (Cloud Run)
+
+    Base de datos PostgreSQL (CloudSQL)
+
+    Variables y secretos (OPENAI_API_KEY, API_TOKEN)
+
+    Infraestructura separada por entornos: dev, stg, prod
+
+| Rama Git    | Entorno desplegado                |
+| ----------- | --------------------------------- |
+| `develop`   | `terraform/env/dev`               |
+| `main`      | `terraform/env/prod`              |
+| `feature/*` | Solo `terraform plan` (modo test) |
+
+### 🏗️ Requisitos:
+
+    Terraform ≥ 1.6
+
+    Google Cloud project habilitado
+
+    Service Account con permisos:
+
+        Cloud Run Admin
+
+        CloudSQL Admin
+
+        Storage Admin (para backend remoto)
+
+    Secret GCP_SA_KEY configurado en GitHub Secrets
+
+
+🚀 Para pruebas locales:
+
+```bash
+cd terraform/env/dev
+terraform init
+terraform plan
+terraform apply
+```
+
+y ademas un Makefile para desplegar en local:
+
+```bash
+make terraform-init-dev
+make terraform-plan-dev
+make terraform-apply-dev
+```
 
 ## ☁️ Despliegue con Terraform en GCP
 
